@@ -13,14 +13,14 @@ npm run dev
 
 ## 已实现
 
-- 产品首页、算法图谱、Hashcash / SHA-256d / Scrypt 三门渐进课堂。
+- 产品首页、算法图谱与 12 门渐进课堂：Hashcash、SHA-256d、Scrypt、Argon2、Equihash、Cuckoo Cycle、Ethash、Etchash、RandomX、Primecoin、kHeavyHash、VDF。
 - 默认 10 秒全局概览：完整展示任务、工作、答案与验证，8.8 秒出现完成结果；独立于真实求解和 WASM 初始化。
 - 可选“深入计算细节”：Hashcash 搜索仪表 / SHA-256d 双哈希舱 / Scrypt 立体内存阵列。
 - 连续时间轴、拖动回放、章节跳转、暂停、前后步进、重置与速度控制；支持减少动态效果，离开标签页自动暂停。
 - 动画数据在 Worker 中预先真实计算，再按教学节奏播放。Hashcash 展示完整搜索与复算，双哈希展示原始字节及位变化，Scrypt 展示实际 ROMix 写入 / 寻址 / 异或 / BlockMix 轨迹。
 - Web Worker + hash-wasm 实际求解；15 秒预算、停止控制、独立复算验证。
 - 真实尝试次数、耗时、吞吐率与验证耗时；Scrypt 工作内存理论估计。
-- 标准库 Python / Node.js 可运行示例，统一 UTF-8 输入与测试夹具，Shiki 语法高亮。
+- Python / Node.js 可运行示例，统一 UTF-8 输入与测试夹具，Shiki 语法高亮。Argon2 示例使用 argon2-cffi / hash-wasm，其余示例使用标准库。
 - 概率实验：10 / 30 / 100 轮真实哈希搜索，可复现的挑战种子、理论与实测分布、数据表及 JSON 导出。
 - 真实搜索前 24 次轨迹回放；修改挑战或 nonce 的独立证明检查器；单次证明 JSON 导出。
 - 响应式布局、键盘焦点、减少动态效果支持。
@@ -34,6 +34,7 @@ Hashcash 是 SHA-256 教学搜索构造，区别于原始 SHA-1 邮件 stamp。�
 ## 验证
 
 ```sh
+python -m pip install -r requirements-test.txt
 npm test
 npm run build
 ```
@@ -50,7 +51,7 @@ npm run build
 
 ## 研究路线
 
-下一阶段：Equihash 与 Cuckoo Cycle 小参数模型，以及挑战签名、防重放的协议沙盒。后续引入 RandomX、Ethash/Etchash、Primecoin 和 VDF 教学模型。图谱中的研究路线条目与可运行课堂分别标注。
+12 门课堂已接通内容、概览、代码与实验。下一阶段可深化挑战签名与防重放沙盒、正式协议测试向量、模型与参考实现对照，以及整页浏览器交互验收。
 
 ## 原始资料
 
@@ -61,7 +62,7 @@ npm run build
 
 ## 架构
 
-React + TypeScript + Vite；DOM/CSS 概念动画；独立 Worker 计算；hash-wasm 提供 SHA-256/Scrypt。`src/engine.ts` 为计算核心，`src/worker.ts` 负责预算及事件，`examples/` 为标准库教学代码。
+React + TypeScript + Vite；DOM/CSS 概念动画；独立 Worker 计算；hash-wasm 提供 SHA-256/Scrypt/Argon2id。`src/engine.ts` 为计算核心，`src/worker.ts` 负责预算及事件，`examples/` 为双语言教学代码。`src/advanced/` 管理后九门课堂的内容、10 秒概览与结构模型。
 
 ## 界面验收清单
 
@@ -89,3 +90,40 @@ Scrypt 轨迹实现按照 RFC 7914 使用 Salsa20/8 与 BlockMix，记录每个 
 默认展示 10 秒概念概览，压缩可变的实际工作时间，让学习者先理解整个任务如何完成。Hashcash 强调多次尝试与一次验证的成本关系；SHA-256d 强调每个候选经过两轮哈希；Scrypt 强调计算与内存工作区。概览中的格子、流程和播放时间属于教学示意，真实性能由独立求解实验记录。
 
 “深入计算细节”按需启动 Worker 生成真实轨迹，保留慢放、寄存器、字节矩阵和寻址细节。页面默认概览由即时可用的概念状态机驱动，结果出现时间固定；真实实验的随机搜索时间保持原有测量口径。
+
+## 完整课堂与实验分级
+
+| 课堂 / 路由 | 实验内容 | 与正式协议的关系 |
+| --- | --- | --- |
+| `#argon2` | 真实 Argon2id 派生，m=64/256/1024 KiB、t=2、p=1 | 完整原语、教学参数；用于观察单次派生 |
+| `#equihash` | 截断 SHA-256 的前缀配对和四索引 XOR 归零 | 广义生日问题结构模型 |
+| `#cuckoo` | 8+8 节点二部图、四边简单环搜索与验证 | 图论证明结构模型 |
+| `#ethash` | epoch 计算、64 数据项、16 次寻址混合、按需复算 | 缩小数据集的结构模型；研究历史 Ethash |
+| `#etchash` | 分叉边界两侧的 epoch 规则与同类寻址模型 | 保留分组规则；正式 seedHash 与 DAG 由规范定义 |
+| `#randomx` | 四寄存器、32 字内存、五类整数/访存指令 | 专用 VM 的结构模型 |
+| `#primecoin` | 小整数 Cunningham 第一类链、精确素性检查 | 素数链模型，正式链绑定与难度规则见源码 |
+| `#kheavyhash` | 4×4 / 8×8 矩阵乘法、混合与哈希 | 小矩阵结构模型 |
+| `#vdf` | 128/256/512 次顺序平方、小模数 Wesolowski 验证等式 | 代数结构模型，模数公开可分解；VDF 为相邻原语 |
+
+每页独立展示目的、数学直觉、模型边界、原始资料及 Python/Node.js 示例。动画为固定 10 秒概念概览，8.8 秒进入结尾；实验在可取消 Worker 内实际计算，具有 10 秒上限，可导出 JSON 并修改证据重新检查。模型统计与耗时只描述对应教学构造。
+
+### 示例运行与维护
+
+```sh
+node examples/equihash.mjs hello-pow 256
+python examples/cuckoo.py hello-pow 64
+node examples/vdf.mjs hello-pow 256
+python -m pip install argon2-cffi==25.1.0
+python examples/argon2_demo.py hello-pow 64
+```
+
+Argon2 Python 文件命名为 `argon2_demo.py`，方便正常导入 `argon2` 依赖包。JavaScript 原理模型的源文件是 `src/advanced/kernels.ts`。修改后执行以下命令同步自包含示例与浏览器代码资产：
+
+```sh
+node scripts/generate-examples.mjs
+python scripts/generate_python_models.py
+npm test
+npm run build
+```
+
+测试覆盖全部九门的跨语言结果、模型参数上限、证据篡改、epoch 分叉边界，以及生产 Worker 的运行与验证消息。教学模型的正确性与正式网络协议兼容性分别评估；本仓库当前不把结构模型输出作为链上证明。

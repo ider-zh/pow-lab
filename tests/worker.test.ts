@@ -94,3 +94,37 @@ test("film data is prepared through the production worker transport", async () =
     assert.equal(result.film.kind, algorithm);
   }
 });
+
+test("remaining algorithms execute and validate through the production worker", async () => {
+  for (const [algorithm, parameter] of Object.entries({
+    argon2: 64,
+    equihash: 256,
+    cuckoo: 64,
+    ethash: 11700000,
+    etchash: 11700000,
+    randomx: 16,
+    primecoin: 4,
+    kheavyhash: 4,
+    vdf: 256,
+  })) {
+    const result = await runWorker(
+      { mode: "advanced", algorithm, parameter, challenge: "hello-pow" },
+      ["model-done"],
+    );
+    assert.equal(result.type, "model-done", algorithm);
+    assert(result.verified, algorithm);
+    assert(result.solveMs >= 0);
+    assert(result.verifyMs >= 0);
+    const verification = await runWorker(
+      {
+        mode: "advanced-verify",
+        algorithm,
+        parameter,
+        challenge: "hello-pow",
+        output: result.output,
+      },
+      ["model-verified"],
+    );
+    assert(verification.verified, algorithm);
+  }
+});

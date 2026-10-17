@@ -8,6 +8,8 @@ import ProbabilityLab from "./ProbabilityLab";
 import ProofInspector from "./ProofInspector";
 import TraceReplay from "./TraceReplay";
 import type { SearchResult } from "./search";
+import { advancedLessons, advancedById } from "./advanced/catalog";
+import AdvancedLesson from "./advanced/AdvancedLesson";
 const algorithms = [
   {
     id: "hashcash",
@@ -43,14 +45,10 @@ const algorithms = [
     source: "https://www.rfc-editor.org/rfc/rfc7914.html",
   },
 ];
-const advanced = [
-  ["Equihash", "碰撞搜索", "寻找满足异或关系的一组哈希"],
-  ["Cuckoo Cycle", "图论搜索", "在伪随机图中寻找指定长度的环"],
-  ["RandomX", "随机程序", "让通用 CPU 执行随机生成的程序"],
-  ["Ethash / Etchash", "数据集访问", "探索以太坊历史与经典网络的算法"],
-  ["Primecoin", "数学搜索", "寻找满足条件的素数链"],
-  ["VDF", "相邻技术", "研究顺序计算与可验证延迟"],
-];
+const navigation = [...algorithms, ...advancedLessons].map(({ id, name }) => ({
+  id,
+  name,
+}));
 type Result = SearchResult;
 function App() {
   const [route, setRoute] = useState(location.hash.slice(1) || "home");
@@ -135,7 +133,7 @@ function App() {
     location.hash = id;
   };
   useEffect(() => {
-    document.title = `${route === "home" ? "看见计算，理解证明" : route === "probability" ? "概率实验" : route === "atlas" ? "算法图谱" : algo.name} · PoW Lab`;
+    document.title = `${route === "home" ? "看见计算，理解证明" : route === "probability" ? "概率实验" : route === "atlas" ? "算法图谱" : (advancedById(route)?.name ?? algo.name)} · PoW Lab`;
   }, [route, algo.name]);
   return (
     <>
@@ -151,7 +149,7 @@ function App() {
             概览
           </a>
           <a
-            className={algorithms.some((a) => a.id === route) ? "active" : ""}
+            className={navigation.some((a) => a.id === route) ? "active" : ""}
             href="#hashcash"
           >
             算法课堂
@@ -262,6 +260,20 @@ function App() {
               ))}
             </div>
           </section>
+          <section className="section" style={{ paddingTop: 0 }}>
+            <div className="curriculum-callout">
+              <div>
+                <div className="eyebrow">12 ALGORITHMS / ONE LEARNING PATH</div>
+                <h3>从哈希搜索，走进图、内存与数学。</h3>
+                <p>
+                  继续探索 Argon2、Equihash、Cuckoo
+                  Cycle、Ethash、Etchash、RandomX、Primecoin、kHeavyHash 和
+                  VDF。
+                </p>
+              </div>
+              <a href="#atlas">进入完整算法图谱 →</a>
+            </div>
+          </section>
           <section className="observatory-teaser">
             <div>
               <span className="eyebrow">NEW / PROBABILITY OBSERVATORY</span>
@@ -303,32 +315,39 @@ function App() {
                 <p>{a.desc}</p>
               </a>
             ))}
-            {advanced.map(([name, tag, desc]) => (
-              <article className="card" key={name}>
-                <span className="pill muted">研究路线 · {tag}</span>
-                <h3>{name}</h3>
-                <p>{desc}</p>
-                <small>规划：原理动画、教学模型与参考实现</small>
-              </article>
+            {advancedLessons.map((a) => (
+              <a className="card" href={"#" + a.id} key={a.id}>
+                <span className="pill">{a.scope}</span>
+                <h3>{a.name} ↗</h3>
+                <p>{a.desc}</p>
+                <small>10 秒概览 · 教学实验 · 双语言代码</small>
+              </a>
             ))}
           </div>
           <aside>
             历史坐标：以太坊主网于 2022 年 9 月 15 日完成 The Merge，转向
-            PoS。Ethash 课堂将以历史协议为研究对象。{" "}
+            PoS。Ethash 课堂以历史协议为研究对象，Etchash 课堂单独介绍其 epoch
+            调整。{" "}
             <a href="https://ethereum.org/roadmap/merge/">阅读原始资料 ↗</a>
           </aside>
         </main>
+      ) : advancedById(route) ? (
+        <AdvancedLesson
+          key={route}
+          lesson={advancedById(route)!}
+          navigation={navigation}
+        />
       ) : (
         <main className="lesson">
-          <aside className="sidebar">
+          <aside className="sidebar extended-sidebar">
             <div className="eyebrow">THE ACADEMY</div>
-            {algorithms.map((a, i) => (
+            {navigation.map((a, i) => (
               <a
                 className={route === a.id ? "selected" : ""}
                 key={a.id}
                 href={"#" + a.id}
               >
-                <span>0{i + 1}</span>
+                <span>{String(i + 1).padStart(2, "0")}</span>
                 {a.name}
                 <span>↗</span>
               </a>
@@ -586,13 +605,7 @@ function App() {
               >
                 ← 上一站
               </a>
-              <a
-                href={
-                  algorithms.indexOf(algo) === 2
-                    ? "#atlas"
-                    : "#" + algorithms[algorithms.indexOf(algo) + 1].id
-                }
-              >
+              <a href={"#" + navigation[algorithms.indexOf(algo) + 1].id}>
                 下一站 →
               </a>
             </div>

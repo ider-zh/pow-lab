@@ -26,3 +26,9 @@
 - Default principle films to a complete 10-second global overview: task → work → proof → verification → completion. Show the final outcome by 8.8 seconds and hold it for comprehension.
 - Global overviews are clearly labeled conceptual time-compressed stories and render immediately, independently of solving, Worker startup, and WASM. Keep detailed numerical traces in the optional deeper view.
 - Introduce roles and the work/verification cost relationship before nonces, hexadecimal strings, registers, and individual memory addresses.
+
+- The academy contains 12 lessons. Keep atlas links, sidebar order, previous/next navigation, and Python/Node examples in sync.
+- Advanced teaching constructions must state their exact substitutions (hash, dimensions, graph size, instruction subset, or group parameters). Keep formal protocol compatibility claims tied to reference vectors.
+- Distinguish real Argon2id derivation from nonce-search PoW. Treat VDF as an adjacent primitive and its public small modulus as an algebra demo.
+- Keep Node examples generated from kernels.ts and Python equivalents cross-checked against the browser model. Argon2 Python code uses argon2_demo.py to avoid shadowing the dependency.
+- Model proof verification certifies the mathematical structure or recomputed result, not the surrounding timing or trace metadata.

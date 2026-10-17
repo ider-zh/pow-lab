@@ -4,6 +4,34 @@ import { validateBatch } from "./statistics.ts";
 import type { BatchInput, Trial } from "./statistics.ts";
 self.onmessage = async ({ data }) => {
   try {
+    if (data.mode === "advanced" || data.mode === "advanced-verify") {
+      const { runModel, verifyModel } = await import("./advanced/models.ts");
+      const start = performance.now();
+      const output =
+        data.mode === "advanced"
+          ? await runModel(data.algorithm, data.challenge, data.parameter)
+          : data.output;
+      const solved = performance.now();
+      const verified = await verifyModel(
+        data.algorithm,
+        data.challenge,
+        data.parameter,
+        output,
+      );
+      if (data.mode === "advanced-verify")
+        self.postMessage({ type: "model-verified", verified });
+      else
+        self.postMessage({
+          type: "model-done",
+          output,
+          verified,
+          challenge: data.challenge,
+          parameter: data.parameter,
+          solveMs: solved - start,
+          verifyMs: performance.now() - solved,
+        });
+      return;
+    }
     if (data.mode === "film") {
       const { hashcashFilm, doubleFilm, scryptFilm } =
         await import("./films/data.ts");
