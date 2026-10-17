@@ -13,7 +13,11 @@ export function useFilmClock(ready: boolean, duration = 20) {
     [duration],
   );
   useEffect(() => {
-    if (ready && !matchMedia("(prefers-reduced-motion: reduce)").matches)
+    if (
+      ready &&
+      !document.hidden &&
+      !matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
       setPlaying(true);
   }, [ready]);
   useEffect(() => {
@@ -23,7 +27,7 @@ export function useFilmClock(ready: boolean, duration = 20) {
     const tick = (now: number) => {
       position.current = Math.min(
         duration,
-        position.current + Math.min((now - last) / 1000, 0.1) * speed,
+        position.current + ((now - last) / 1000) * speed,
       );
       last = now;
       if (now - paint >= 32 || position.current >= duration) {

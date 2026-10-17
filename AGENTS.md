@@ -22,3 +22,7 @@
 - Drive displayed hashes, memory addresses, XOR states, and bit-difference counts from reproducible computation. Identify small teaching parameters and separate playback time from runtime.
 - New cryptographic trace implementations require parity checks against an independent implementation and per-step invariant tests.
 - Principle films respect reduced-motion preferences and pause when the browser tab becomes hidden.
+
+- Default principle films to a complete 10-second global overview: task → work → proof → verification → completion. Show the final outcome by 8.8 seconds and hold it for comprehension.
+- Global overviews are clearly labeled conceptual time-compressed stories and render immediately, independently of solving, Worker startup, and WASM. Keep detailed numerical traces in the optional deeper view.
+- Introduce roles and the work/verification cost relationship before nonces, hexadecimal strings, registers, and individual memory addresses.
