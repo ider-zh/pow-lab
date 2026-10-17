@@ -1,9 +1,10 @@
 // PoW Lab: scrypt. UTF-8 challenge + ':' + decimal nonce.
 import {createHash, scryptSync} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
-export function digest(challenge, nonce) {
+export function digest(challenge, nonce, N = 1024) {
+  if (![1024, 2048, 4096].includes(N)) throw Error("N must be 1024, 2048 or 4096");
   const data = Buffer.from(`${challenge}:${nonce}`, 'utf8');
-  return scryptSync(data, 'pow-lab-v1', 32, {N: 1024, r: 8, p: 1}).toString('hex');
+  return scryptSync(data, 'pow-lab-v1', 32, {N, r: 8, p: 1}).toString('hex');
 }
 export function solve(challenge = 'hello-pow', difficulty = 2) {
   if (!Number.isInteger(difficulty) || difficulty < 1 || difficulty > 4)

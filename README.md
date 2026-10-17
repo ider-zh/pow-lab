@@ -17,7 +17,9 @@ npm run dev
 - 概念动画的播放、暂停、前后单步、重置和速度控制。
 - Web Worker + hash-wasm 实际求解；15 秒预算、停止控制、独立复算验证。
 - 真实尝试次数、耗时、吞吐率与验证耗时；Scrypt 工作内存理论估计。
-- 标准库 Python / Node.js 可运行示例，统一 UTF-8 输入与测试夹具。
+- 标准库 Python / Node.js 可运行示例，统一 UTF-8 输入与测试夹具，Shiki 语法高亮。
+- 概率实验：10 / 30 / 100 轮真实哈希搜索，可复现的挑战种子、理论与实测分布、数据表及 JSON 导出。
+- 真实搜索前 24 次轨迹回放；修改挑战或 nonce 的独立证明检查器；单次证明 JSON 导出。
 - 响应式布局、键盘焦点、减少动态效果支持。
 
 ## 实验口径
@@ -33,11 +35,19 @@ npm test
 npm run build
 ```
 
-测试包含 RFC 7914 Scrypt 向量、SHA-256 向量、双重哈希、Python/Node.js/浏览器引擎一致性与参数校验。
+测试包含 RFC 7914 Scrypt 向量、SHA-256 向量、双重哈希、Python/Node.js/浏览器计算模块一致性、工作预算、输入校验、几何分布区间与分位点、Worker 真实批量运行和独立验证。Worker 测试使用 Node transport shim，验证同一个模块的计算与事件行为；浏览器视觉与交互需要另行验收。
+
+## 概率实验与记录
+
+打开 `#probability`，选择 Hashcash 或 SHA-256d、难度 1 或 2、重复 10/30/100 次。每轮挑战为 `seed:trial:index`（index 从 0 开始），搜索的输入仍为 `challenge:nonce`。固定算法、难度和种子会得到相同尝试次数；耗时受设备与实现影响。批量预算为 30 秒 / 100 万次尝试。理论曲线基于均匀独立哈希输出的几何分布模型。
+
+停止或预算耗尽后，保留部分样本，并说明长耗时轮次缺失可能造成的偏差。手动停止时，累计次数和耗时仅为最后一次回传快照。JSON 记录区分完整与部分数据，包含挑战、nonce、哈希和验证结果。
+
+在课堂完成求解后，可修改输入单独检查目标条件，也可导出证明。Scrypt 示例的 `digest(challenge, nonce, N=1024)` 支持界面的三档 N 参数。
 
 ## 研究路线
 
-下一阶段：概率分布批量实验、结果导出、Shiki 代码高亮、Equihash 与 Cuckoo Cycle 小参数模型。后续引入 RandomX、Ethash/Etchash、Primecoin 和 VDF 教学模型。图谱中的研究路线条目与可运行课堂分别标注。
+下一阶段：Equihash 与 Cuckoo Cycle 小参数模型，以及挑战签名、防重放的协议沙盒。后续引入 RandomX、Ethash/Etchash、Primecoin 和 VDF 教学模型。图谱中的研究路线条目与可运行课堂分别标注。
 
 ## 原始资料
 
@@ -49,3 +59,12 @@ npm run build
 ## 架构
 
 React + TypeScript + Vite；DOM/CSS 概念动画；独立 Worker 计算；hash-wasm 提供 SHA-256/Scrypt。`src/engine.ts` 为计算核心，`src/worker.ts` 负责预算及事件，`examples/` 为标准库教学代码。
+
+## 界面验收清单
+
+- 桌面与 390px 移动端检查导航、课堂、概率图表和横向代码滚动。
+- 播放 / 暂停 / 单步 / 重置，检查减少动态效果设置。
+- 运行三种算法，停止长实验，再切换课堂，确认旧 Worker 结果不会覆盖新实验。
+- 在 Python / Node.js 间切换，检查语法高亮和复制。
+- 运行概率实验，核对频数总和、数据导出及相同种子的可复现性。
+- 修改证明的挑战与 nonce，观察重新计算后的目标判定。

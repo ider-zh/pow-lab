@@ -11,3 +11,8 @@
 - Scrypt is a KDF used here in a search construction; VDF is an adjacent primitive. Ethereum mainnet moved to PoS in 2022.
 - Keep browser assets in public/examples synchronized with examples/.
 - Run npm test and npm run build before submitting changes.
+
+- Keep probability statistics exact: use a geometric model with explicit assumptions; distinguish complete batches, censored work, and manual-stop snapshots.
+- Use the same immutable input configuration for computation, display, export, and verification. Clear stale results when parameters change.
+- Ignore events from replaced Workers. Release Workers and timers on route changes and component unmount.
+- Load only Python/JavaScript grammars and one theme for code highlighting, lazily.
