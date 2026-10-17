@@ -56,21 +56,31 @@ export default function ProbabilityLab() {
   const incomplete = stopped || result?.type === "batch-timeout";
   return (
     <main className="section probability">
-      <div className="eyebrow">THE OBSERVATORY / EXPERIMENT 01</div>
+      <div className="eyebrow">CHANCE AND COMPUTATION / 概率与运气</div>
       <h1>
-        平均要等多久？
+        同一道题，
         <br />
-        <span>让概率自己说话。</span>
+        <span>有人幸运，有人久等。</span>
       </h1>
       <p className="lead">
         同一个难度，为什么一次很快，一次很慢？
         <br />
-        用真实哈希重复实验，将观察结果与几何分布对照。
+        一次搜索里的偶然，重复很多次之后，会留下什么形状？
       </p>
+      <div className="probability-prose">
+        <h2>平均值，并不是一条截止线。</h2>
+        <p>
+          假设每次尝试的命中概率都是 1/16。平均需要 16 次，并不意味着第 16
+          次一定成功；前面没有找到答案，也不会让下一次更容易命中。在这个模型里，每次都像重新抽一张签。
+        </p>
+        <p>
+          把许多次等待放在一起，短等待通常多一些，特别长的等待少一些。这种首次成功前的等待，可以用几何分布描述。下面的实验台会留下真实搜索记录，也画出理论分布，看看两者怎样相遇。
+        </p>
+      </div>
       <section className="panel">
         <div className="panel-title">
           <h2>
-            <small>01</small> 设计一组实验
+            <small>01</small> 留下一组真实的等待
           </h2>
           <span className="pill">Worker · 真实重复计算</span>
         </div>
@@ -322,8 +332,9 @@ export default function ProbabilityLab() {
           </article>
         </div>
         <p>
-          先预测：将难度从 1 改成 2，平均工作量会增加多少？再运行 100
-          次实验检验。样本越多，整体形状通常越接近理论；单次等待始终有随机波动。
+          将难度从 1 改成
+          2，平均工作量会增加多少？这里可以用更多次真实搜索，看看运气背后的分布。
+          样本越多，整体形状通常越接近理论；单次等待始终有随机波动。
         </p>
       </section>
       {trials.length > 0 && (
@@ -380,7 +391,7 @@ export default function ProbabilityLab() {
         </section>
       )}
       <div className="lesson-nav">
-        <a href="#hashcash">← 回到 Hashcash 课堂</a>
+        <a href="#hashcash">← 接着读 Hashcash 的故事</a>
         <a href="#atlas">探索算法图谱 →</a>
       </div>
     </main>

@@ -18,7 +18,6 @@ export type Lesson = {
   control: string;
   defaultParameter: number;
   optionLabels?: Record<number, string>;
-  chapters: [string, string][];
   takeaway: string;
 };
 export const advancedLessons: Lesson[] = [
@@ -29,7 +28,7 @@ export const advancedLessons: Lesson[] = [
     symbol: "▤",
     question: "如何把内存、轮数和并行度写进计算成本？",
     desc: "用多轮填充与引用内存块，研究可调节的派生成本。",
-    scope: "真实 Argon2id · 教学参数",
+    scope: "真实 Argon2id · 小参数",
     boundary:
       "实验执行 Argon2id v1.3 的真实派生，m=64/256/1024 KiB、t=2、p=1。这里观察单次派生；PoW 还需加入候选搜索和目标条件。",
     intuition:
@@ -45,13 +44,6 @@ export const advancedLessons: Lesson[] = [
     sourceName: "RFC 9106",
     control: "参数内存 m / KiB",
     defaultParameter: 64,
-    chapters: [
-      ["准备内存", "先确定内存大小、遍历轮数与通道数。"],
-      ["逐轮填充", "各通道按规则引用已有块，再将内存重新混合。"],
-      ["汇总结果", "合并通道末块，派生固定长度输出。"],
-      ["重新派生", "检查者使用相同输入与参数，执行一次派生。"],
-      ["理解资源成本", "内存与时间都参与成本设计；PoW 搜索可在此基础上构造。"],
-    ],
     takeaway: "一次派生，让时间和内存共同参与。",
   },
   {
@@ -61,7 +53,7 @@ export const advancedLessons: Lesson[] = [
     symbol: "⊕",
     question: "能否把许多候选，合并成一份容易检查的答案？",
     desc: "分组、碰撞与异或，让搜索者提交一组有结构的索引。",
-    scope: "碰撞结构教学模型",
+    scope: "碰撞结构模型",
     boundary:
       "模型采用 16 位截断 SHA-256、四个不同索引、8 位前缀配对与 XOR 归零，展示广义生日问题。正式 Equihash 使用特定 BLAKE2b、个性化参数、递归碰撞规则与规范编码。",
     intuition:
@@ -72,18 +64,11 @@ export const advancedLessons: Lesson[] = [
     mathText:
       "四个值异或为零是本模型的最终条件；模型还检查两个索引对的高 8 位相等。正式协议具有更多层级与顺序约束。",
     application:
-      "适合研究内存密集求解与紧凑验证。模型的候选数量和运行时间只描述本教学构造。",
+      "适合研究内存密集求解与紧凑验证。模型的候选数量和运行时间只描述本缩小模型。",
     source: "https://github.com/khovratovich/equihash",
     sourceName: "作者参考实现",
     control: "候选叶子数量",
     defaultParameter: 256,
-    chapters: [
-      ["生成候选", "先产生大量候选叶子。"],
-      ["分组与合并", "按相同前缀配对，再用异或消去相同部分。"],
-      ["留下结构答案", "找到能让最终异或归零的一组索引。"],
-      ["重算少量叶子", "检查者重算证明中指明的叶子，检查组合约束。"],
-      ["理解非对称性", "搜索大量候选，检查少量证据。"],
-    ],
     takeaway: "大量碰撞搜索，换来少量可检查的索引。",
   },
   {
@@ -93,7 +78,7 @@ export const advancedLessons: Lesson[] = [
     symbol: "↻",
     question: "在一张复杂网络中，怎样找出一个指定长度的环？",
     desc: "把候选映射为边，修剪与搜索，最后提交一个闭合环。",
-    scope: "二部图四边环教学模型",
+    scope: "二部图四边环模型",
     boundary:
       "模型用 SHA-256 映射 8+8 个节点，搜索长度 4 的简单环，并提交四条边的编号。正式 Cuckoo Cycle 使用指定边生成规则、图规模与目标环长；模型突出图结构。",
     intuition:
@@ -109,13 +94,6 @@ export const advancedLessons: Lesson[] = [
     sourceName: "Cuckoo Cycle 原始实现",
     control: "生成边的数量",
     defaultParameter: 64,
-    chapters: [
-      ["生成网络", "挑战映射出一张二部图。"],
-      ["处理大量连接", "正式求解可修剪枝条，并搜索剩余连接中的环。"],
-      ["找到闭合路径", "留下指定长度的环，提交其中的边编号。"],
-      ["检查这个环", "重建提交的边，检查它们是否组成要求的简单环。"],
-      ["理解图证明", "复杂网络里搜索，少量边上检查。"],
-    ],
     takeaway: "在全图里搜索，只提交环上的边。",
   },
   {
@@ -142,13 +120,6 @@ export const advancedLessons: Lesson[] = [
     sourceName: "Ethereum Ethash 文档",
     control: "示例区块高度",
     defaultParameter: 11700000,
-    chapters: [
-      ["确定 epoch", "根据区块高度确定本轮共享数据集。"],
-      ["访问并混合", "从数据集中读出数据，混合后决定下一次访问。"],
-      ["生成候选结果", "把最终状态汇总，再参与目标筛选。"],
-      ["按需检查", "验证者可以重新生成需要的数据项来检查候选。"],
-      ["理解存储交换", "用数据集存储换取更快的重复计算。"],
-    ],
     takeaway: "共享数据集，让存储与计算相互交换。",
   },
   {
@@ -169,18 +140,11 @@ export const advancedLessons: Lesson[] = [
     mathText:
       "Ethereum Classic 主网在高度 11700000 激活该调整。实验可切换分叉边界两侧，比较 epoch 与相同输入的模型输出。",
     application:
-      "用于学习协议如何通过参数与时序规则影响设备资源需求。模型区分 epoch 分组与真实 seedHash 生成。",
+      "用于观察协议如何通过参数与时序规则影响设备资源需求。模型区分 epoch 分组与真实 seedHash 生成。",
     source: "https://ecips.ethereumclassic.org/ECIPs/ecip-1099",
     sourceName: "ECIP-1099",
     control: "分叉边界示例高度",
     defaultParameter: 11700000,
-    chapters: [
-      ["观察旧节奏", "先看每 30000 个区块进入新 epoch 的分组方式。"],
-      ["调整时间刻度", "激活后改用 60000 个区块作为 epoch 长度。"],
-      ["更新数据集安排", "新的 epoch 影响数据集规模与增长节奏。"],
-      ["按一致规则检查", "求解与验证需要一致的分叉和种子规则。"],
-      ["理解协议演化", "同一类计算，通过资源时序调整服务不同网络。"],
-    ],
     takeaway: "改变增长节奏，也是工作量证明的设计。",
   },
   {
@@ -206,13 +170,6 @@ export const advancedLessons: Lesson[] = [
     sourceName: "RandomX 设计与规范",
     control: "生成指令数量",
     defaultParameter: 16,
-    chapters: [
-      ["生成程序", "根据输入生成待执行的工作。"],
-      ["执行多类指令", "CPU 执行运算并读写内存，状态不断变化。"],
-      ["汇总机器状态", "将程序执行结果汇总为固定长度输出。"],
-      ["重现执行过程", "检查者按相同程序和规则复算。"],
-      ["理解通用计算", "让多种 CPU 能力共同参与工作。"],
-    ],
     takeaway: "把工作变成程序，让通用计算能力参与竞争。",
   },
   {
@@ -238,13 +195,6 @@ export const advancedLessons: Lesson[] = [
     sourceName: "Primecoin 素数链实现",
     control: "目标链长度",
     defaultParameter: 4,
-    chapters: [
-      ["选择起点", "从候选整数开始寻找素数。"],
-      ["延长素数链", "每次乘二加一，继续检查是否为素数。"],
-      ["找到指定长度", "足够长的链成为可提交的数学证据。"],
-      ["检查链的结构", "检查每一项的素性和相邻项关系。"],
-      ["留下数学结果", "工作带来一条可记录、可复查的素数链。"],
-    ],
     takeaway: "搜索稀少的数学结构，提交可复查的链。",
   },
   {
@@ -271,13 +221,6 @@ export const advancedLessons: Lesson[] = [
     control: "矩阵维度",
     defaultParameter: 4,
     optionLabels: { 4: "4 × 4", 8: "8 × 8" },
-    chapters: [
-      ["准备向量与矩阵", "由输入生成本轮需要的结构。"],
-      ["执行矩阵乘法", "每一行组合向量各项，得到变换后的数据。"],
-      ["混合并哈希", "将乘积与输入混合，生成待筛选的结果。"],
-      ["重复计算检查", "检查者用一致规则复算同一候选。"],
-      ["理解混合流水线", "矩阵运算与哈希一起组成工作。"],
-    ],
     takeaway: "把矩阵变换与哈希串成一条计算流水线。",
   },
   {
@@ -298,18 +241,11 @@ export const advancedLessons: Lesson[] = [
     mathText:
       "令 2ᵀ = qℓ + r，证明 π = x^q，则检查 π^ℓ × x^r ≡ y (mod N)。验证者用快速模幂计算 r 与等式两侧；小参数模型只展示代数机制。",
     application:
-      "用于学习公共随机性、时间顺序与可验证延迟。它与概率搜索型 PoW 是相邻但不同的密码学工具。",
+      "用于观察公共随机性、时间顺序与可验证延迟。它与概率搜索型 PoW 是相邻但不同的密码学工具。",
     source: "https://eprint.iacr.org/2018/623",
     sourceName: "Wesolowski VDF 论文",
     control: "连续平方次数 T",
     defaultParameter: 256,
-    chapters: [
-      ["确定起点与步数", "给定输入、群参数和顺序计算步数。"],
-      ["沿平方链前进", "每一步使用上一步的结果，形成计算依赖。"],
-      ["交出结果与证明", "完成后给出 y 与代数证明 π。"],
-      ["检查验证等式", "用模幂等式检查所提交的结果。"],
-      ["理解可验证延迟", "关注顺序深度，而非反复碰运气寻找 nonce。"],
-    ],
     takeaway: "顺序计算产生结果，代数关系帮助检查。",
   },
 ];

@@ -100,7 +100,7 @@ export default function ModelLab({ lesson }: { lesson: Lesson }) {
     <section className="panel">
       <div className="panel-title">
         <h2>
-          <small>02</small> 亲手完成一份算例
+          <small>02</small> 一个可以复查的算例
         </h2>
         <span className="pill">{lesson.scope}</span>
       </div>

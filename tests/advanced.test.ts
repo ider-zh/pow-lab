@@ -44,7 +44,6 @@ test("every remaining lesson supplies a complete narrative, experiment and bound
     advancedLessons.map((a) => a.id).sort(),
   );
   for (const lesson of advancedLessons) {
-    assert.equal(lesson.chapters.length, 5);
     assert(lesson.boundary.length > 40);
     assert(lesson.source.startsWith("https://"));
     assert(modelOptions[lesson.id].includes(lesson.defaultParameter as never));
