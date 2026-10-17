@@ -16,3 +16,9 @@
 - Use the same immutable input configuration for computation, display, export, and verification. Clear stale results when parameters change.
 - Ignore events from replaced Workers. Release Workers and timers on route changes and component unmount.
 - Load only Python/JavaScript grammars and one theme for code highlighting, lazily.
+
+- Give each algorithm a distinct visual mechanism: nonce search for Hashcash, raw-byte transfer between two passes for SHA-256d, memory writes and data-dependent reads for Scrypt.
+- Use continuous, scrubbable timelines and chapter narration for principle films. Keep the main animation prominent near the top of each lesson.
+- Drive displayed hashes, memory addresses, XOR states, and bit-difference counts from reproducible computation. Identify small teaching parameters and separate playback time from runtime.
+- New cryptographic trace implementations require parity checks against an independent implementation and per-step invariant tests.
+- Principle films respect reduced-motion preferences and pause when the browser tab becomes hidden.

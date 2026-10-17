@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import type { Algorithm } from "./engine";
 import "./style.css";
 import CodeBlock from "./CodeBlock";
-import AlgorithmScene from "./AlgorithmScene";
+import FilmPlayer from "./films/FilmPlayer";
 import ProbabilityLab from "./ProbabilityLab";
 import ProofInspector from "./ProofInspector";
 import TraceReplay from "./TraceReplay";
@@ -64,9 +64,6 @@ function App() {
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState("");
   const worker = useRef<Worker | null>(null);
-  const [step, setStep] = useState(0);
-  const [play, setPlay] = useState(false);
-  const [speed, setSpeed] = useState(1000);
   const algo = algorithms.find((x) => x.id === route) || algorithms[0];
   const stop = () => {
     worker.current?.terminate();
@@ -78,8 +75,6 @@ function App() {
       stop();
       setResult(null);
       setDifficulty(2);
-      setStep(0);
-      setPlay(false);
       setRoute(location.hash.slice(1) || "home");
       window.scrollTo(0, 0);
     };
@@ -89,11 +84,6 @@ function App() {
       worker.current?.terminate();
     };
   }, []);
-  useEffect(() => {
-    if (!play) return;
-    const t = setInterval(() => setStep((s) => (s + 1) % 4), speed);
-    return () => clearInterval(t);
-  }, [play, speed]);
   useEffect(() => {
     let active = true;
     setCode("");
@@ -147,10 +137,6 @@ function App() {
   useEffect(() => {
     document.title = `${route === "home" ? "看见计算，理解证明" : route === "probability" ? "概率实验" : route === "atlas" ? "算法图谱" : algo.name} · PoW Lab`;
   }, [route, algo.name]);
-  const stages =
-    algo.id === "scrypt"
-      ? ["输入展开", "保存内存块", "访问与混合", "输出与比较"]
-      : ["构造输入", "计算哈希", "检查目标", "改变 nonce"];
   return (
     <>
       <header>
@@ -362,91 +348,14 @@ function App() {
               <span className="lesson-index">/ LAB</span>
             </h1>
             <p className="lead">{algo.question}</p>
-            <p className="intro">{algo.detail}</p>
-            <section className="panel">
+            <section className="panel film-panel">
               <div className="panel-title">
                 <h2>
-                  <small>01</small> 让原理发生
+                  <small>01</small> 看见算法如何工作
                 </h2>
-                <span className="pill">概念动画</span>
+                <span className="pill">可回放原理动画</span>
               </div>
-              <AlgorithmScene algorithm={algo.id as Algorithm} step={step} />
-              <div className="flow">
-                {stages.map((s, i) => (
-                  <div className={step === i ? "lit" : ""} key={s}>
-                    <small>0{i + 1}</small>
-                    <strong>{s}</strong>
-                    <span>
-                      {
-                        [
-                          "challenge : nonce",
-                          algo.id === "scrypt"
-                            ? "N × 128r bytes"
-                            : "hash(input)",
-                          "hash < target",
-                          "nonce + 1",
-                        ][i]
-                      }
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <p className="step-text">
-                {algo.id === "scrypt"
-                  ? [
-                      "将口令与盐输入派生函数，生成初始块。",
-                      "ROMix 保存中间状态；主要工作区约为 128 × N × r 字节。",
-                      "由数据决定访问位置，将读出的状态继续混合。",
-                      "派生 32 字节输出，检查前导零；命中即得到证明。",
-                    ][step]
-                  : [
-                      "把挑战字符串、冒号和十进制 nonce 编码为 UTF-8 字节。",
-                      "哈希将任意长度的输入映射为固定长度的结果。微小变化也会改变输出。",
-                      "每个十六进制前导零将命中概率缩小为原来的 1/16。",
-                      "未命中时增加 nonce，再试一次。每次结果都需要实际计算。",
-                    ][step]}
-              </p>
-              <div className="controls">
-                <button
-                  className="secondary"
-                  onClick={() => {
-                    setPlay(false);
-                    setStep((s) => (s + 3) % 4);
-                  }}
-                >
-                  ← 上一步
-                </button>
-                <button className="secondary" onClick={() => setPlay(!play)}>
-                  {play ? "暂停" : "播放"}
-                </button>
-                <button
-                  className="secondary"
-                  onClick={() => {
-                    setPlay(false);
-                    setStep((s) => (s + 1) % 4);
-                  }}
-                >
-                  下一步 →
-                </button>
-                <button
-                  className="text-button"
-                  onClick={() => {
-                    setStep(0);
-                    setPlay(false);
-                  }}
-                >
-                  重置
-                </button>
-                <select
-                  aria-label="动画速度"
-                  value={speed}
-                  onChange={(e) => setSpeed(+e.target.value)}
-                >
-                  <option value={2000}>0.5×</option>
-                  <option value={1000}>1×</option>
-                  <option value={500}>2×</option>
-                </select>
-              </div>
+              <FilmPlayer key={algo.id} algorithm={algo.id as Algorithm} />
             </section>
             <section className="panel">
               <div className="panel-title">
@@ -602,6 +511,7 @@ function App() {
               <h2>
                 <small>03</small> 从直觉走向数学
               </h2>
+              <p className="intro">{algo.detail}</p>
               <p>
                 设 X 为首次成功所需尝试次数，d
                 为前导零字符数。将哈希输出视作均匀随机时，单次成功概率 p =

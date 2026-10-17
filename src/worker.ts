@@ -4,6 +4,21 @@ import { validateBatch } from "./statistics.ts";
 import type { BatchInput, Trial } from "./statistics.ts";
 self.onmessage = async ({ data }) => {
   try {
+    if (data.mode === "film") {
+      const { hashcashFilm, doubleFilm, scryptFilm } =
+        await import("./films/data.ts");
+      const film =
+        data.algorithm === "hashcash"
+          ? await hashcashFilm()
+          : data.algorithm === "sha256d"
+            ? await doubleFilm()
+            : data.algorithm === "scrypt"
+              ? await scryptFilm(data.N ?? 16)
+              : null;
+      if (!film) throw Error("请选择支持的算法");
+      self.postMessage({ type: "film", film });
+      return;
+    }
     if (data.mode === "verify") {
       validateInput(data);
       if (!Number.isSafeInteger(data.nonce) || data.nonce < 0)

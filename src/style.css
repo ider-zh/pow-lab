@@ -449,44 +449,6 @@ footer {
 .panel-title h2 {
   margin: 0;
 }
-.flow {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-.flow > div {
-  padding: 18px 12px;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  transition: 0.3s;
-}
-.flow .lit {
-  border-color: var(--accent);
-  background: #c7ef8612;
-}
-.flow strong,
-.flow small,
-.flow span {
-  display: block;
-}
-.flow small {
-  font: 11px monospace;
-  color: var(--muted);
-}
-.flow strong {
-  font-size: 14px;
-  margin: 15px 0;
-}
-.flow span {
-  font: 10px monospace;
-  color: var(--muted);
-}
-.step-text {
-  min-height: 45px;
-  font-size: 13px;
-  line-height: 1.8;
-  color: #a8b9b8;
-}
 .controls {
   display: flex;
   gap: 8px;
@@ -687,9 +649,6 @@ pre {
   .parameters {
     max-width: 100%;
   }
-  .flow {
-    grid-template-columns: 1fr 1fr;
-  }
   .section-head {
     display: block;
   }
@@ -788,12 +747,6 @@ pre {
   }
   .panel-title {
     flex-wrap: wrap;
-  }
-  .flow {
-    gap: 8px;
-  }
-  .flow > div {
-    padding: 14px 10px;
   }
   .math {
     font-size: 22px;
@@ -1100,69 +1053,5 @@ button:focus-visible {
   }
   .probability .panel:has(.distribution-chart) {
     overflow: auto;
-  }
-}
-.algorithm-scene {
-  margin: 10px 0 25px;
-  background:
-    radial-gradient(ellipse at 45% 50%, #25372b66, transparent 80%), #101a1d;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  overflow: auto;
-}
-.algorithm-scene svg {
-  display: block;
-  width: 100%;
-  min-width: 460px;
-}
-.algorithm-scene text {
-  fill: #b5c5c1;
-  font-size: 12px;
-  font-family: inherit;
-}
-.algorithm-scene .scene-small {
-  font-size: 10px;
-  fill: #8d9fa1;
-}
-.scene-wire {
-  stroke: #425454;
-  stroke-width: 1;
-  fill: none;
-}
-.scene-path {
-  fill: none;
-  stroke: #c7ef86;
-  stroke-width: 2;
-  stroke-dasharray: 6 5;
-  animation: flow-line 1.5s linear infinite;
-}
-.scene-box {
-  fill: #18282a;
-  stroke: #425454;
-  transition:
-    fill 0.25s,
-    stroke 0.25s;
-}
-.scene-box.highlighted {
-  fill: #354730;
-  stroke: #c7ef86;
-}
-.memory-cell {
-  fill: #1b2b2d;
-  stroke: #415252;
-  transition: fill 0.2s;
-}
-.memory-cell.filled {
-  fill: #b4d982;
-  stroke: #c7ef86;
-}
-@keyframes flow-line {
-  to {
-    stroke-dashoffset: -22;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .scene-path {
-    animation: none;
   }
 }

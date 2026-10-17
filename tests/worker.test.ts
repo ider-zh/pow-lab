@@ -84,3 +84,13 @@ test("verification worker checks nonce and modified challenge", async () => {
   ]);
   assert.equal(invalid.type, "error");
 });
+
+test("film data is prepared through the production worker transport", async () => {
+  for (const algorithm of ["hashcash", "sha256d", "scrypt"]) {
+    const result = await runWorker({ mode: "film", algorithm, N: 16 }, [
+      "film",
+    ]);
+    assert.equal(result.type, "film");
+    assert.equal(result.film.kind, algorithm);
+  }
+});
